@@ -1,41 +1,61 @@
-<!DOCTYPE html>
-<html lang=”uk”>
+{% extends "base.html" %}
+{% load static %}
 
-<head>
-    <title>Blog</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <h1>Ласкаво просимо до ModernBlog</h1>
+        <p>Відкрийте для себе світ сучасних технологій</p>
+        <a href="{% url 'articles-list' %}" class="btn">Переглянути статті</a>
+    </div>
+</div>
 
-<body>
-    Категорії
+<div class="container">
     {% if categories %}
-    {% for item in categories %}
-    <div>
-        <a href="{{ item.get_absolute_url }}">
-            <h4>{{ item.category }}</h4>
-        </a>
+    <div class="section-title">
+        <h2>Категорії</h2>
+        <p>Оберіть категорію, яка вас цікавить</p>
     </div>
-    {% endfor %}
+    
+    <div class="grid grid-3">
+        {% for item in categories %}
+        <a href="{{ item.get_absolute_url }}" class="category-link">
+            <div class="card">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div>
+                        <h3>{{ item.category }}</h3>
+                        <p>Переглянути публікації</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
     {% endif %}
+
     {% if articles %}
-    {% for item in articles %}
-    <div>
-        <a href="{{ item.get_absolute_url }}">
-            <h4>{{ item.title }}</h4>
-        </a>
-        <h5>
-            {{ item.pub_date|date:"j E Y"|safe|linebreaks }}
-        </h5>
-        <p>
-            {{ item.description|safe|escape|striptags|truncatewords_html:32 }}
-        </p>
+    <div class="section-title">
+        <h2>Рекомендовані статті</h2>
+        <p>Найкращі публікації для вас</p>
     </div>
-    {% endfor %}
+    
+    <div class="grid grid-2">
+        {% for item in articles %}
+        <div class="card">
+            {% if item.images.all %}
+            <img src="{{ item.images.all.0.image.url }}" alt="{{ item.title }}" class="article-image">
+            {% endif %}
+            <div class="card-meta">
+                {{ item.pub_date|date:"j F Y" }}
+            </div>
+            <h3><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></h3>
+            <p>{{ item.description|truncatewords:20 }}</p>
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
-    <a href="{% url 'articles-list' %}">
-        <h4>Всі публікації</h4>
-    </a>
-
-</body>
-
-</html>
+</div>
+{% endblock %}
